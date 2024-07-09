@@ -1,0 +1,24 @@
+
+
+#!/bin/bash
+
+# Define your backup directory (change '/path/to/your/backup/directory' to your actual directory)
+backup_directory="/path/to/your/backup/directory"
+
+# Define your S3 bucket name (change 'your-s3-bucket-name' to your actual bucket name)
+s3_bucket_name="your-s3-bucket-name"
+
+# Set the date and filename for the backup
+backup_date=$(date +%Y-%m-%d)
+backup_filename="backup-${backup_date}.tar.gz"
+
+# Create a tarball of the backup directory
+tar -czvf "${backup_filename}" "${backup_directory}"
+
+# Upload the backup file to the S3 bucket
+aws s3 cp "${backup_filename}" "s3://${s3_bucket_name}/"
+
+# Remove the local backup file after successful upload
+rm "${backup_filename}"
+
+echo "Backup successfully transferred to S3 bucket: ${s3_bucket_name}"

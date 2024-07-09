@@ -1,0 +1,141 @@
+ Shell scripting 
+ -------------
+ Instllation java by shellscipting
+ -------------------------------------
+vi installjava.sh
+#! /bin/bash
+echo "checking java has installed or not"
+java -version
+
+if [ $? -eq 0 ]
+then
+echo "java has alredy installed ..."
+else
+echo "Java has not installed..."
+echo "Installing java.."
+sudo yum install java-11-openjdk -y 
+fi
+--------------------------
+ 
+ vi installJava.sh
+
+echo "Checking Java has installed or not"
+java -version
+
+if [ $? -eq 0 ]
+then
+echo "Java has already installed.."
+else
+echo "Java has not installed.."
+echo "Installing Java"
+sudo yum install java-11-openjdk -y
+fi
+---------------------------------------
+echo $0 ----> script name print 
+echo ${1} ----> 1st arg value
+echo ${2} -----> 2nd arg value 
+echo ${3} -----> 3rd arg value
+echo ${11} -----> 11th arg value 
+echo $#  -------> number of argument print 
+echo $* --------> all the args a one string 
+echo $@ ---------> all the args , each args as a one string one string 
+echo $$ ---------> PID print process ID 
+echo $? ---------> Previous command execution status
+successful - 0
+command not found - 127
+
+
+
+
+
+echo $0 --> script name
+echo ${1} --> 1st arg value
+echo ${2} --> 2nd arg
+Echo ${3} --> 3rd arg
+echo ${11} ==> 11th arg
+echo $# --> number of args
+
+echo $* --> all the args
+echo $@ --> all the args
+
+what is the diff b/w $* and $@?
+Ans) $* --> all the args a one string  --> "proddb dbloc"
+     $@ --> each arg as a one string one string --> "proddb" "dbloc"
+
+
+echo $$ --> PID
+
+Date
+
+echo $? --> Previoud commmand execution status
+
+
+0 --> Previous cmd execution successfull
+
+127 --> cmnd not found
+-----------------------------------------------------
+java package remove 
+#! /bin/bash
+yum remove java-11-openjdk -yum
+
+if [ $? -eq 0]
+then
+echo "java has uninstalled successfully"
+fi
+
+----------------------------------------------
+Find the file on crrrent dir
+-------------------------
+#! /bin/bash
+echo " please enter the file name you want to check in current dir"
+read filename
+
+if [ -f $filename]
+then 
+echo "$filename is available in cureent directory"
+else
+echo "$filename is not available in curent dir"
+fi
+
+
+echo "Please enter the file name which you want to check in current dir"
+read filename
+
+if [ -f $filename ]
+then
+echo "$filename is availabe in current directory"
+else
+echo "$filename is not avaliable in current directory"
+fi
+---------------------------------------------------------
+find the file and show the content , if not avalible create the file 
+------------------------------------------------------------------------
+#! /bin/bash
+echo "please enter the file name which you want to check in current dir"
+read filename
+
+if [ -f $filename ]
+then 
+echo "$filename is avalible in current dir'
+echo "$filename content shows..."
+cat $filename
+else
+echo "$filename is not avalible in the current dir"
+echo "$filename creting file..."
+touch $filename
+fi
+
+echo "Please enter the file name which you want to check in current dir"
+read filename
+
+if [ -f $filename ]
+then
+echo "$filename is availabe in current directory"
+echo "$filename content are: .."
+cat $filename
+else
+echo "$filename is not avaliable in current directory"
+echo "$filename is creating.."
+tocuh $filename
+fi
+--------------------------------------------------------------

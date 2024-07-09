@@ -1,0 +1,243 @@
+shell scrpting 
+---------------
+command line argument 
+  $1 $2 ...$9 , $11 
+read    # read through we can pass the argument
+
+#Create user & group
+#!/bin/bash
+
+user_group="avinna"  # user_group=$2
+
+if [ "$user_group" == "avinna" ]
+then 
+  echo "user group $user_group exists !!"
+else if [ "$user_group" == "devops" ]
+then 
+  echo "Admin of server"
+else 
+  echo "invalid group"
+fi
+----------------------------
+#check dir & if not create the dir
+#! bin/bash
+
+config_dir=$1
+if [ -d "config" }
+then 
+  config_files=$(ls config)
+  echo "reading config dir contents: $config_files"
+else 
+  echo "config dir doesn't exists, createing one..."
+  mkdir config_dir
+  touch "$config_dir/data.txt"
+  touch "$config_dir/data2.txt"
+fi
+------------------------------------
+# read throug create user  & paaswd
+#!/bin/bash
+
+read -p "please enter your name" name
+
+echo "welcome to devops $name "
+--------------------------------
+#! /bin/bash
+
+echo -n "welcome to devops youtube channel"
+
+read -p "enter your username: " user 
+read -p "enter your password: " passwd
+
+if [ "$passwd" == "avinna123" ]
+then 
+  echo 'Login successsful !!!"
+else 
+  echo " login failed !!"
+fi
+--------------------------------------
+
+$1 -  first argument 
+$2 -  second argument
+$3 -  third argument
+$* -  all parameters arguments shows
+$# -  number of arguments
+$? -  last command result 
+
+
+Loops
+  while
+  for
+  until
+  select
+  
+  for loop [ - - - ]
+vi for.sh
+#!/bin/bash
+
+for param in $#
+do 
+    echo "parameter: $param"
+done
+
+------------------------
+#! /bin/bash
+
+echo "num of params $#"
+
+for param in $*       # for i in [ condition ]
+do 
+  if [ -d "$param" ]
+  then 
+    echo "executing script into dir"
+	ls -l $param
+  fi
+  echo "parameter: $param"
+done
+----------------------------
+while loop  while  cond 
+---------  
+while condition
+do 
+
+done
+#!/bin/bash
+
+sum=0
+
+while true
+do
+   read -p "enter a number: " num
+   if [ "sum" = "q" ]
+   then 
+        break
+   fi 
+   sum=$((sum + num))
+   echo "Sum of numbers: $num"
+done
+
+-------------------------------
+function sum(){
+sum=0
+
+while true
+do
+   read -p "enter a number: " num
+   if [ "sum" = "q" ]
+   then 
+        break
+   fi 
+   sum=$((sum + num))
+   echo "Sum of numbers: $num"
+done
+}
+
+sum
+------------------------------------
+#!/bin/bash
+
+function create_file(){
+   file_name=$1
+   touch $file_name
+   echo "file : $file_name is created"
+}
+
+create_file test.sh
+create_file abc.yaml
+create_file data4.txt
+   
+----------------------------
+# vi /opt/scripts/os-log-alert.sh
+
+#!/bin/bash
+
+#Set the variable which equal to zero
+
+prev_count=0
+
+count=$(grep -i "`date --date='yesterday' '+%b %e'`" /var/log/messages | egrep -wi 'warning|error|critical' | wc -l)
+
+if [ "$prev_count" -lt "$count" ] ; then
+
+# Send a mail to given email id when errors found in log
+
+SUBJECT="WARNING: Errors found in log on "`date --date='yesterday' '+%b %e'`""
+
+# This is a temp file, which is created to store the email message.
+
+MESSAGE="/tmp/logs.txt"
+
+TO="daygeek@gmail.com"
+
+echo "ATTENTION: Errors are found in /var/log/messages. Please Check with Linux admin." >> $MESSAGE
+
+echo  "Hostname: `hostname`" >> $MESSAGE
+
+echo -e "\n" >> $MESSAGE
+
+echo "+------------------------------------------------------------------------------------+" >> $MESSAGE
+
+echo "Error messages in the log file as below" >> $MESSAGE
+
+echo "+------------------------------------------------------------------------------------+" >> $MESSAGE
+
+grep -i "`date --date='yesterday' '+%b %e'`" /var/log/messages | awk '{ $3=""; print}' | egrep -wi 'warning|error|critical' >>  $MESSAGE
+
+mail -s "$SUBJECT" "$TO" < $MESSAGE
+
+#rm $MESSAGE
+
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
