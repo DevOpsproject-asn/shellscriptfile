@@ -1,0 +1,296 @@
+Shell Scripting various senario used script :
+----------------------------------------------
+1. Installation for packages to use shellscripting 
+2. update the server
+3. Patch update for the servers
+4. upgrade the server packages 
+5. log file collect it and send to other folder 
+6. configuration file to change by using shell scripting 
+7. Auto cron job run with shell scripting
+8. Log files send to cloud s3 bucket 
+
+Backup Script:
+#!/bin/bash
+tar -czf backup_$(date +%Y%m%d).tar.gz /path/to/backup
+
+File Cleanup:
+#!/bin/bash
+find /path/to/files -type f -mtime +7 -exec rm {} \;
+
+Log Rotation:
+#!/bin/bash
+log_file="/path/to/log/file.log"
+mv "$log_file" "$log_file.$(date +%Y%m%d)"
+touch "$log_file"
+
+System Monitoring:
+#!/bin/bash
+cpu_usage=$(top -bn1 | grep "Cpu(s)" | awk '{print $2}')
+if (( $(echo "$cpu_usage > 90" | bc -l) )); then
+    echo "High CPU usage: $cpu_usage%" | mail -s "Alert: High CPU Usage" admin@example.com
+fi
+
+Automated Testing:
+#!/bin/bash
+make test
+if [ $? -ne 0 ]; then
+    echo "Tests failed. Check the logs." | mail -s "Alert: Test Failure" admin@example.com
+fi
+
+Database Backup:
+#!/bin/bash
+mysqldump -u username -p password mydatabase > backup.sql
+
+Website Uptime Monitoring:
+#!/bin/bash
+website="http://example.com"
+if ! curl --silent --head "$website" | grep "200 OK" > /dev/null; then
+    echo "Website is down: $website" | mail -s "Alert: Website Down" admin@example.com
+fi
+
+File Encryption:
+#!/bin/bash
+gpg --output encrypted_file.gpg --encrypt --recipient user@example.com sensitive_file.txt
+
+Automated Deployment:
+#!/bin/bash
+git pull origin master
+systemctl restart your-app.service
+
+Directory Synchronization:
+#!/bin/bash
+rsync -av /source/directory/ /destination/directory/
+
+
+Directory Synchronization:
+
+#!/bin/bash
+
+# Source and destination directories
+source_dir="/path/to/source"
+destination_dir="/path/to/destination"
+
+# Log file to record synchronization details
+log_file="/path/to/sync_log.txt"
+
+# Run rsync command
+rsync -av --delete "$source_dir/" "$destination_dir/" >> "$log_file" 2>&1
+
+# Check the exit status of rsync
+if [ $? -eq 0 ]; then
+    echo "Directory synchronization completed successfully." >> "$log_file"
+else
+    echo "Error during directory synchronization. Check the logs for details." >> "$log_file"
+fi
+
+0 2 * * * /path/to/sync_directories.sh
+
+---------------------------------------------------------------------------
+
+
+#!/bin/bash
+
+# Deployment settings
+app_dir="/path/to/your/app"
+git_repo="https://github.com/yourusername/yourapp.git"
+branch="main"  # or the branch you want to deploy
+service_name="your-app-service"
+
+# Log file to record deployment details
+log_file="/path/to/deployment_log.txt"
+
+echo "Starting deployment at $(date)" >> "$log_file"
+
+# Navigate to the application directory
+cd "$app_dir" || exit
+echo "Changing to the app directory: $app_dir" >> "$log_file"
+
+# Pull the latest changes from the Git repository
+git pull origin "$branch"
+echo "Pulling latest changes from $git_repo" >> "$log_file"
+
+# Install dependencies (if needed)
+# Example for Node.js application with npm
+# npm install
+
+# Restart the application service
+systemctl restart "$service_name"
+echo "Restarting $service_name" >> "$log_file"
+
+# Check the exit status of the service restart
+if [ $? -eq 0 ]; then
+    echo "Deployment completed successfully." >> "$log_file"
+else
+    echo "Error during deployment. Check the logs for details." >> "$log_file"
+fi
+
+----------------------
+File encrypted 
+-------
+#!/bin/bash
+
+# File to be encrypted
+file_to_encrypt="/path/to/your/file.txt"
+
+# Recipient's public key (replace with the actual key)
+recipient_key="recipient@example.com"
+
+# Encrypted file name
+encrypted_file="${file_to_encrypt}.gpg"
+
+# Encrypt the file
+gpg --recipient "$recipient_key" --output "$encrypted_file" --encrypt "$file_to_encrypt"
+
+# Check the exit status of the encryption process
+if [ $? -eq 0 ]; then
+    echo "File encryption successful. Encrypted file: $encrypted_file"
+else
+    echo "Error during file encryption. Please check the logs for details."
+fi
+
+
+----------------------------------------------------------------------------------
+Website monitoring 
+
+#!/bin/bash
+
+# Website URL to monitor
+website_url="http://example.com"
+
+# Log file to record monitoring details
+log_file="/path/to/uptime_log.txt"
+
+# Function to check website status
+check_website() {
+    status_code=$(curl -Is --max-time 5 "$website_url" | head -n 1 | awk '{print $2}')
+    
+    if [ "$status_code" == "200" ]; then
+        echo "$(date): Website is UP (Status Code: $status_code)" >> "$log_file"
+    else
+        echo "$(date): Website is DOWN (Status Code: $status_code)" >> "$log_file"
+        # Add additional actions if the website is down (e.g., send an email, restart services, etc.)
+    fi
+}
+
+# Run the website check
+check_website
+
+--------------------------------------
+
+Database backup:
+-------
+#!/bin/bash
+
+# MySQL database details
+db_user="your_username"
+db_password="your_password"
+db_name="your_database"
+
+# Backup directory and file
+backup_dir="/path/to/backup"
+backup_file="${backup_dir}/backup_$(date +%Y%m%d).sql"
+
+# Create the backup
+mysqldump -u "$db_user" -p"$db_password" "$db_name" > "$backup_file"
+
+# Check the exit status of mysqldump
+if [ $? -eq 0 ]; then
+    echo "MySQL database backup completed successfully. Backup file: $backup_file"
+else
+    echo "Error during MySQL database backup. Please check the logs for details."
+fi
+---------------
+Mysql installation shell script :
+--------
+#!/bin/bash
+
+# MySQL root password
+mysql_root_password="your_secure_password"
+
+# Update the package list
+sudo apt-get update
+
+# Install MySQL Server
+sudo apt-get install -y mysql-server
+
+# Secure the MySQL installation
+sudo mysql_secure_installation <<EOF
+
+y
+$mysql_root_password
+$mysql_root_password
+y
+y
+y
+y
+EOF
+
+# Check the status of the MySQL service
+sudo systemctl status mysql
+
+sudo mysql
+ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
+
+
+
+---------------------------
+system monitoring :
+------
+#!/bin/bash
+
+# Log file to record monitoring details
+log_file="/path/to/system_monitoring.log"        
+/var/log/mysql/error.log
+
+
+# Function to get system information
+get_system_info() {
+    echo "===== System Information =====" >> "$log_file"
+    date >> "$log_file"
+    uname -a >> "$log_file"
+    echo "" >> "$log_file"
+}
+
+# Function to get CPU usage
+get_cpu_usage() {
+    echo "===== CPU Usage =====" >> "$log_file"
+    top -b -n 1 | grep "%Cpu" >> "$log_file"
+    echo "" >> "$log_file"
+}
+
+# Function to get memory usage
+get_memory_usage() {
+    echo "===== Memory Usage =====" >> "$log_file"
+    free -m >> "$log_file"
+    echo "" >> "$log_file"
+}
+
+# Function to get disk space usage
+get_disk_usage() {
+    echo "===== Disk Space Usage =====" >> "$log_file"
+    df -h >> "$log_file"
+    echo "" >> "$log_file"
+}
+
+# Function to get network statistics
+get_network_stats() {
+    echo "===== Network Statistics =====" >> "$log_file"
+    netstat -i >> "$log_file"
+    echo "" >> "$log_file"
+}
+
+# Main function
+main() {
+    get_system_info
+    get_cpu_usage
+    get_memory_usage
+    get_disk_usage
+    get_network_stats
+}
+
+# Run the monitoring functions
+main
+
+
+
+
