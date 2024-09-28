@@ -1,0 +1,310 @@
+#!/bin/bash
+
+# Configuration
+JENKINS_URL="http://jenkins-server-url"
+JOB_NAME="your-job-name"
+BUILD_NUMBER="your-build-number"
+LOGS_DIR="/path/to/save/logs"
+
+# Create logs directory if it doesn't exist
+mkdir -p "$LOGS_DIR"
+
+# Download log files
+curl "$JENKINS_URL/job/$JOB_NAME/$BUILD_NUMBER/consoleText" > "$LOGS_DIR/console.log"
+curl "$JENKINS_URL/job/$JOB_NAME/$BUILD_NUMBER/logText/progressiveText?start=0" > "$LOGS_DIR/build.log"
+
+echo "Log files downloaded to $LOGS_DIR"
+
+--------------------------------------
+Write a shell script for disk space and memory to check on server-url
+-------------------------
+#!/bin/bash
+
+# Disk Space
+disk_space() {
+  echo "Disk Space:"
+  df -h
+  echo
+}
+
+# Memory Details
+memory_details() {
+  echo "Memory Details:"
+  free -h
+  echo
+}
+
+# Main script
+disk_space
+memory_details
+-------------------------------------
+Write a scipt for monitor the server 
+---------------------------------------
+#!/bin/bash
+
+# Function to check CPU usage
+check_cpu_usage() {
+  echo "CPU Usage:"
+  top -bn1 | grep "Cpu(s)" | awk '{print "Usage: " $2 "%"}'
+  echo
+}
+
+# Function to check memory usage
+check_memory_usage() {
+  echo "Memory Usage:"
+  free -h | grep "Mem" | awk '{print "Total: " $2, "Used: " $3, "Free: " $4}'
+  echo
+}
+
+# Function to check disk space
+check_disk_space() {
+  echo "Disk Space:"
+  df -h | grep "/dev" | awk '{print "Filesystem: " $1, "Size: " $2, "Used: " $3, "Available: " $4, "Usage: " $5}'
+  echo
+}
+
+# Main script
+check_cpu_usage
+check_memory_usage
+check_disk_space
+------------------------------------
+Write a bash shell script for update the server
+---------------------------------------------
+#!/bin/bash
+
+# Update package lists
+echo "Updating package lists..."
+sudo apt update
+
+# Upgrade installed packages
+echo "Upgrading installed packages..."
+sudo apt upgrade -y
+
+# Clean up unused packages and free up disk space
+echo "Cleaning up unused packages..."
+sudo apt autoremove -y
+sudo apt autoclean
+
+echo "Package update completed."
+-----------------------------------------
+---
+- name: Update Yum Packages
+  hosts: your_server
+  become: true
+
+  tasks:
+    - name: Update package lists
+      yum:
+        name: '*'
+        state: latest
+        update_cache: yes
+-------------------------------
+generate bash shell script for installation of java with conditions
+--------------------------------------------------------------------------
+#!/bin/bash
+
+# Check if Java is already installed
+java_version=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}')
+if [ -n "$java_version" ]; then
+    echo "Java is already installed. Version: $java_version"
+    exit 0
+fi
+
+# Check if OpenJDK is available
+if command -v apt-get >/dev/null 2>&1; then
+    package_manager="apt-get"
+    jdk_package="openjdk-11-jdk"
+elif command -v yum >/dev/null 2>&1; then
+    package_manager="yum"
+    jdk_package="java-11-openjdk-devel"
+else
+    echo "Unsupported package manager. Please install Java manually."
+    exit 1
+fi
+
+# Install Java
+echo "Installing Java..."
+sudo "$package_manager" install -y "$jdk_package"
+
+# Verify installation
+java_version=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}')
+if [ -n "$java_version" ]; then
+    echo "Java installation successful. Version: $java_version"
+else
+    echo "Java installation failed."
+fi
+
+-------------------------------------------------------
+generate bash shell script for installation of maven with conditions
+-----------------------
+#!/bin/bash
+
+# Check if Maven is already installed
+maven_version=$(mvn -v | grep "Apache Maven" | awk '{print $3}')
+if [ -n "$maven_version" ]; then
+    echo "Maven is already installed. Version: $maven_version"
+    exit 0
+fi
+
+# Check if package manager is available
+if command -v apt-get >/dev/null 2>&1; then
+    package_manager="apt-get"
+elif command -v yum >/dev/null 2>&1; then
+    package_manager="yum"
+else
+    echo "Unsupported package manager. Please install Maven manually."
+    exit 1
+fi
+
+# Install Maven
+echo "Installing Maven..."
+sudo "$package_manager" install -y maven
+
+# Verify installation
+maven_version=$(mvn -v | grep "Apache Maven" | awk '{print $3}')
+if [ -n "$maven_version" ]; then
+    echo "Maven installation successful. Version: $maven_version"
+else
+    echo "Maven installation failed."
+fi
+------------------------------------------------------------
+------------------------------
+generate bash shell script for installation of git with conditions
+----------------------------------
+#!/bin/bash
+
+# Check if Git is already installed
+git_version=$(git --version 2>&1 | awk '{print $3}')
+if [ -n "$git_version" ]; then
+    echo "Git is already installed. Version: $git_version"
+    exit 0
+fi
+
+# Check if package manager is available
+if command -v apt-get >/dev/null 2>&1; then
+    package_manager="apt-get"
+elif command -v yum >/dev/null 2>&1; then
+    package_manager="yum"
+else
+    echo "Unsupported package manager. Please install Git manually."
+    exit 1
+fi
+
+# Install Git
+echo "Installing Git..."
+sudo "$package_manager" install -y git
+
+# Verify installation
+git_version=$(git --version 2>&1 | awk '{print $3}')
+if [ -n "$git_version" ]; then
+    echo "Git installation successful. Version: $git_version"
+else
+    echo "Git installation failed."
+fi
+------------------------------------------------------------------
+generate bash shell script for installation of jenkins with conditions
+-------------------------------------
+#!/bin/bash
+
+# Check if Jenkins is already installed
+jenkins_version=$(sudo systemctl is-active --quiet jenkins && curl -sI http://localhost:8080/jenkins/ | grep -i "jenkins ver" | awk -F ' ' '{print $2}')
+if [ -n "$jenkins_version" ]; then
+    echo "Jenkins is already installed. Version: $jenkins_version"
+    exit 0
+fi
+
+# Check if package manager is available
+if command -v apt-get >/dev/null 2>&1; then
+    package_manager="apt-get"
+elif command -v yum >/dev/null 2>&1; then
+    package_manager="yum"
+else
+    echo "Unsupported package manager. Please install Jenkins manually."
+    exit 1
+fi
+
+# Install Jenkins
+echo "Installing Jenkins..."
+sudo "$package_manager" update -y
+sudo "$package_manager" install -y wget
+wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
+sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > /etc/apt/sources.list.d/jenkins.list'
+sudo "$package_manager" update -y
+sudo "$package_manager" install -y jenkins
+
+# Start Jenkins service
+echo "Starting Jenkins service..."
+sudo systemctl start jenkins
+
+# Verify installation and service status
+jenkins_status=$(sudo systemctl is-active jenkins)
+if [ "$jenkins_status" == "active" ]; then
+    echo "Jenkins installation and service start successful."
+else
+    echo "Jenkins installation or service start failed."
+fi
+---------------------------------------------------------------
+generate bash shell script for installation of docker with conditions
+-----------------------------------------------------------------------
+#!/bin/bash
+
+# Check if Docker is already installed
+docker_version=$(docker --version | awk '{print $3}' | cut -d ',' -f1)
+if [ -n "$docker_version" ]; then
+    echo "Docker is already installed. Version: $docker_version"
+    exit 0
+fi
+
+# Check if package manager is available
+if command -v apt-get >/dev/null 2>&1; then
+    package_manager="apt-get"
+elif command -v yum >/dev/null 2>&1; then
+    package_manager="yum"
+else
+    echo "Unsupported package manager. Please install Docker manually."
+    exit 1
+fi
+
+# Install Docker
+echo "Installing Docker..."
+sudo "$package_manager" update -y
+sudo "$package_manager" install -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo "$package_manager" update -y
+sudo "$package_manager" install -y docker-ce docker-ce-cli containerd.io
+
+# Start Docker service
+echo "Starting Docker service..."
+sudo systemctl start docker
+
+# Verify installation and service status
+docker_status=$(sudo systemctl is-active docker)
+if [ "$docker_status" == "active" ]; then
+    echo "Docker installation and service start successful."
+else
+    echo "Docker installation or service start failed."
+    exit 1
+fi
+
+# Check if Docker Compose is already installed
+docker_compose_version=$(docker-compose --version | awk '{print $3}' | cut -d ',' -f1)
+if [ -n "$docker_compose_version" ]; then
+    echo "Docker Compose is already installed. Version: $docker_compose_version"
+    exit 0
+fi
+
+# Install Docker Compose
+echo "Installing Docker Compose..."
+sudo curl -sSL -o /usr/local/bin/docker-compose "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)"
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Verify Docker Compose installation
+docker_compose_version=$(docker-compose --version | awk '{print $3}' | cut -d ',' -f1)
+if [ -n "$docker_compose_version" ]; then
+    echo "Docker Compose installation successful. Version: $docker_compose_version"
+else
+    echo "Docker Compose installation failed."
+    exit 1
+fi
+------------------------------------------------------------
